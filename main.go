@@ -8,22 +8,22 @@ import (
 	"log"
 )
 
-// Task represents a to-do task.
+
 type Task struct {
 	ID          int    `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Status      string `json:"status"` // "pending" or "completed"
+	Status      string `json:"status"` 
 }
 
-// Variables to hold tasks and synchronize access
+
 var (
 	thanoojTasks []Task
 	idCounter    int
 	mu           sync.Mutex
 )
 
-// CreateTask creates a new task and appends it to the in-memory list.
+
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var newTask Task
 	err := json.NewDecoder(r.Body).Decode(&newTask)
@@ -37,14 +37,14 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	idCounter++
 	newTask.ID = idCounter
-	newTask.Status = "pending" // Default status
+	newTask.Status = "pending" 
 	thanoojTasks = append(thanoojTasks, newTask)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(newTask)
 }
 
-// GetTasks returns the list of all tasks.
+
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -53,9 +53,9 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(thanoojTasks)
 }
 
-// GetTaskByID retrieves a specific task by its ID.
+
 func GetTaskByID(w http.ResponseWriter, r *http.Request) {
-	idParam := r.URL.Path[len("/tasks/"):] // Extract ID from the URL
+	idParam := r.URL.Path[len("/tasks/"):] 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
@@ -76,7 +76,7 @@ func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Task not found", http.StatusNotFound)
 }
 
-// UpdateTask modifies the details of a specific task.
+
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	idParam := r.URL.Path[len("/tasks/"):] // Extract ID from the URL
 	id, err := strconv.Atoi(idParam)
@@ -118,7 +118,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Task not found", http.StatusNotFound)
 }
 
-// DeleteTask removes a task by its ID from the task list.
+
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	idParam := r.URL.Path[len("/tasks/"):] // Extract ID from the URL
 	id, err := strconv.Atoi(idParam)
